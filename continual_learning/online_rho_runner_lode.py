@@ -1,0 +1,236 @@
+# -*-coding:utf8-*-
+
+import os.path
+import torch
+from torch.nn import functional as F
+import torchvision
+import numpy as np
+
+from continual_learning import online_rho_buffer_lode
+import utils
+
+
+class OnlineRhoRunner(object):
+    def __init__(self, local_path, buffer_size, model_params, use_cuda, transforms, selection_params, train_params,
+                 update_mode, remove_mode, seed, n_class_per_task, total_class, scheduler_params=None):
+        self.local_path = local_path
+        if not os.path.exists(self.local_path):
+            os.makedirs(self.local_path)
+        self.buffer_size = buffer_size
+        self.model_params = model_params
+        self.use_cuda = use_cuda
+        self.transforms = transforms
+        self.selection_params = selection_params
+        self.train_params = train_params
+        self.update_mode = update_mode
+        self.remove_mode = remove_mode
+        self.scheduler_params = scheduler_params
+        self.n_class_per_task = n_class_per_task
+        self.total_class = total_class
+        self.seed = seed
+        # build buffer
+        self.buffer = online_rho_buffer_lode.OnlineRhoBuffer(
+            local_path=os.path.join(self.local_path, 'buffer'),
+            buffer_size=self.buffer_size,
+            selection_params=self.selection_params,
+            model_params=self.model_params,
+            use_cuda=self.use_cuda,
+            transforms=self.transforms,
+            remove_mode=self.remove_mode,
+            add_mode=self.update_mode,
+            seed=seed
+        )
+        # build model
+        self.model = utils.build_model(model_params=self.model_params)
+        self.to_pil = torchvision.transforms.ToPILImage()
+        self.seen_tasks = 0
+        self.results = []
+
+    def inter_cls(self, logits, y):
+        classes1 = torch.arange(self.seen_tasks * self.n_class_per_task)
+        classes2 = torch.arange(self.seen_tasks * self.n_class_per_task, self.total_class)
+        inter_logits = logmeanexp_previous(logits, classes1, classes2, dim=-1)
+        inter_y = torch.ones_like(y)
+        return F.cross_entropy(inter_logits, inter_y, reduction='none')
+
+    def intra_cls(self, logits, y):
+        classes = torch.arange(self.seen_tasks * self.n_class_per_task, self.total_class)
+        mask = torch.zeros_like(logits)
+        mask[:, classes] = 1
+        if self.use_cuda:
+            mask = mask.cuda()
+        logits1 = logits - (1 - mask) * 1e9
+        # ipdb.set_trace()
+        return F.cross_entropy(logits1, y, reduction='none')
+
+    def train_single_task(self, train_loader, eval_loaders, verbose=True, do_evaluation=True):
+        self.model.train()
+        if self.train_params['use_cuda']:
+            self.model.cuda()
+        # make loss function
+        loss_fn = torch.nn.CrossEntropyLoss(reduction='none')
+        # make optimizer
+        if self.train_params['opt_type'] == 'adam':
+            opt = torch.optim.Adam(lr=self.train_params['lr'], params=self.model.parameters())
+        else:
+            opt = torch.optim.SGD(lr=self.train_params['lr'], params=self.model.parameters())
+        if self.scheduler_params is not None:
+            scheduler = utils.make_scheduler(scheduler_params=self.scheduler_params, optimizer=opt)
+        else:
+            scheduler = None
+        # make hyper parameters
+        alpha = torch.tensor(self.train_params['alpha'], dtype=torch.float32, requires_grad=False)
+        if self.train_params['use_cuda']:
+            alpha = alpha.cuda()
+        if 'beta' in self.train_params:
+            beta = torch.tensor(self.train_params['beta'], dtype=torch.float32, requires_grad=False)
+            if self.train_params['use_cuda']:
+                beta = beta.cuda()
+            kd_loss_fn = torch.nn.MSELoss(reduction='mean')
+        else:
+            beta = 0
+            kd_loss_fn = None
+        if self.seen_tasks > 0:
+            cur_task_factor = torch.tensor(
+                self.train_params['rho'] / self.seen_tasks, dtype=torch.float32, requires_grad=False)
+            prv_task_factor = torch.tensor(self.train_params['prv_factor'], dtype=torch.float32, requires_grad=False)
+        else:
+            cur_task_factor = 0
+            prv_task_factor = 0
+        for i in range(self.train_params['epochs']):
+            step = 0
+            for data in train_loader:
+                d_id, sp, aug_sp, lab = data
+                if self.use_cuda:
+                    aug_sp = aug_sp.cuda()
+                    lab = lab.cuda()
+                if not self.buffer.is_empty():
+                    out_logits = self.model(aug_sp)
+                    buffer_data = self.buffer.get_sub_data(data_size=self.train_params['mem_batch_size'])
+                    if len(buffer_data) == 3:
+                        b_sp, b_lab, _ = buffer_data
+                    else:
+                        b_sp, b_lab = buffer_data
+                    if self.train_params['use_cuda']:
+                        b_sp = b_sp.cuda()
+                        b_lab = b_lab.cuda()
+                    b_out = self.model(b_sp)
+                    pre_loss = torch.mean(loss_fn(b_out, b_lab))
+                    if self.seen_tasks > 0:
+                        new_inter_cls = self.inter_cls(logits=out_logits, y=lab)
+                        new_intra_cls = self.intra_cls(logits=out_logits, y=lab)
+                        loss = cur_task_factor * new_inter_cls.mean() + prv_task_factor * new_intra_cls.mean()
+                        ce_losses = loss_fn(out_logits, lab).detach()
+                    else:
+                        ce_losses = loss_fn(out_logits, lab)
+                        loss = torch.mean(ce_losses)
+                    if kd_loss_fn is not None:
+                        buffer_data = self.buffer.get_sub_data(data_size=self.train_params['mem_batch_size'])
+                        if len(buffer_data) == 3:
+                            b_sp, b_lab, b_logit = buffer_data
+                        else:
+                            b_sp, b_lab = buffer_data
+                            b_logit = None
+                        if self.train_params['use_cuda']:
+                            b_sp = b_sp.cuda()
+                            if b_logit is not None:
+                                b_logit = b_logit.cuda()
+                        b_out_l = self.model(b_sp)
+                        kd_loss = kd_loss_fn(b_out_l, b_logit)
+                    else:
+                        kd_loss = 0
+                    loss = loss + alpha * pre_loss + beta * kd_loss
+                    if verbose and step % 100 == 0:
+                        print('loss at step ', step, 'is:', loss.item(), 'pre_loss is:', pre_loss.item())
+                        if kd_loss_fn is not None:
+                            print('kd loss is:', kd_loss.item())
+                else:
+                    out_logits = self.model(aug_sp)
+                    ce_losses = loss_fn(out_logits, lab)
+                    loss = torch.mean(ce_losses)
+                    if verbose and step % 100 == 0:
+                        print('loss at step ', step, 'is:', loss.item())
+                opt.zero_grad()
+                loss.backward()
+                opt.step()
+                # reservoir update
+                if self.use_cuda:
+                    lab = lab.cpu()
+                    ce_losses = ce_losses.cpu()
+                lab = lab.numpy()
+                d_id = d_id.numpy()
+                ce_losses = ce_losses.clone().detach().numpy()
+                if 'beta' in self.train_params:
+                    out_logits = out_logits.clone().detach()
+                    if self.use_cuda:
+                        out_logits = out_logits.cpu()
+                else:
+                    out_logits = None
+                sps = []
+                for j in range(sp.shape[0]):
+                    sps.append(self.to_pil(sp[j, :]))
+                self.buffer.update_buffer(
+                    d_ids=d_id,
+                    sps=sps,
+                    labs=lab,
+                    logits=out_logits,
+                    ce_loss=ce_losses
+                )
+                step += 1
+            if scheduler is not None:
+                scheduler.step()
+            print('finish training epoch:', i)
+            if do_evaluation and i % 10 == 0:
+                accs, losses = self.evaluate_model(eval_loaders=eval_loaders, on_cuda=self.use_cuda)
+                print('\taccuracy on test is:', np.mean(accs), accs, losses)
+                if len(accs) > 1:
+                    print('\tprevious tasks accuracy is:', np.mean(accs[:-1]))
+        del alpha
+        accs, losses = self.evaluate_model(eval_loaders=eval_loaders, on_cuda=self.use_cuda)
+        if self.train_params['use_cuda']:
+            self.model.cpu()
+        print('\tlosses on testset is:', losses)
+        self.results.append(accs)
+        return accs
+
+    def evaluate_model(self, eval_loaders, on_cuda=False):
+        status = self.model.training
+        self.model.eval()
+        accs = []
+        eval_loss_fn = torch.nn.CrossEntropyLoss(reduction='sum')
+        losses = []
+        with torch.no_grad():
+            for i in range(self.seen_tasks + 1):
+                loss = 0
+                correct = 0
+                for data, target in eval_loaders[i]:
+                    if on_cuda:
+                        data, target = data.cuda(), target.cuda()
+                    output = self.model(data)
+                    loss += eval_loss_fn(output, target).cpu().item()
+                    pred = output.argmax(dim=1, keepdim=True)
+                    correct += pred.eq(target.view_as(pred)).sum().item()
+                avg_acc = 100. * correct / len(eval_loaders[i].dataset)
+                avg_loss = loss / len(eval_loaders[i].dataset)
+                accs.append(avg_acc)
+                losses.append(avg_loss)
+        self.model.train(status)
+        return accs, losses
+
+    def next_task(self, dump_buffer=False):
+        self.buffer.next_task()
+        if dump_buffer:
+            self.buffer.dump_buffer(task_id=self.seen_tasks)
+        self.seen_tasks += 1
+
+
+def logmeanexp_previous(x, classes1, classes2, dim=None):
+    """Stable computation of log(mean(exp(x))"""
+    if dim is None:
+        x, dim = x.view(-1), 0
+    x_max, _ = torch.max(x, dim)
+    x_max = x_max.detach()
+    old_pre = torch.logsumexp(x[:, classes1], dim=1)
+    new_pre = torch.logsumexp(x[:, classes2], dim=1)
+    pre = torch.stack([old_pre, new_pre], dim=-1)
+    return pre
