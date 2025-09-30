@@ -30,9 +30,14 @@ def extract_accs(path):
         for k in AVG_KEYS:
             if k in obj and isinstance(obj[k], (int, float)):
                 return [float(obj[k])]
-    # bare list of floats
-    if isinstance(obj, (list, tuple)) and obj and isinstance(obj[0], (int, float)):
-        return [float(x) for x in obj]
+    # bare list of floats - check first element is actually a number
+    if isinstance(obj, (list, tuple)) and obj:
+        try:
+            # Try to convert first element to float to verify it's numeric
+            if isinstance(obj[0], (int, float)):
+                return [float(x) for x in obj]
+        except (TypeError, ValueError):
+            pass
     return None
 
 def summarize_buffer_dir(buffer_dir, use_last=False, verbose=False):
