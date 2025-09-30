@@ -1,0 +1,42 @@
+# Results and outputs
+results/
+logs/
+outputs/
+checkpoints/
+*.out
+*.err
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+
+# PyTorch
+*.pth
+*.pt
+*.ckpt
+
+# Datasets
+data/
+datasets/
+*.tar.gz
+*.zip
+cifar-10-batches-py/
+cifar-100-python/
+MNIST/
+tiny-imagenet-200/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Environment
+venv/
+env/
+.venv
