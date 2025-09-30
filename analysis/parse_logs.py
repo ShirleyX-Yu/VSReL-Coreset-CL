@@ -85,28 +85,26 @@ def main():
         
         accs, mean_acc = result
         
-        # try to infer dataset from path
+        # try to infer dataset from path and filename
         dataset = "unknown"
-        if "split_cifar" in log_path:
-            if "cifar_prv" in log_path:
-                dataset = "split_cifar_prv"
-            elif "cifar100" in log_path:
-                if "prv" in log_path:
-                    dataset = "split_cifar100_prv"
-                else:
-                    dataset = "split_cifar100"
-            else:
-                dataset = "split_cifar"
-        elif "split_mnist" in log_path:
-            if "mnist_prv" in log_path:
-                dataset = "split_mnist_prv"
-            else:
-                dataset = "split_mnist"
-        elif "perm" in log_path:
-            if "prv" in log_path:
-                dataset = "perm_mnist_prv"
-            else:
-                dataset = "perm_mnist"
+        log_name = os.path.basename(log_path).lower()
+        
+        if "cifar_prv" in log_name or "cifar-prv" in log_name:
+            dataset = "split_cifar_prv"
+        elif "cifar100_prv" in log_name or "cifar100-prv" in log_name:
+            dataset = "split_cifar100_prv"
+        elif "cifar100" in log_name:
+            dataset = "split_cifar100"
+        elif "cifar" in log_name:
+            dataset = "split_cifar"
+        elif "mnist_prv" in log_name or "mnist-prv" in log_name:
+            dataset = "split_mnist_prv"
+        elif "mnist" in log_name:
+            dataset = "split_mnist"
+        elif "perm_prv" in log_name or "perm-prv" in log_name:
+            dataset = "perm_mnist_prv"
+        elif "perm" in log_name:
+            dataset = "perm_mnist"
         
         rows.append({
             "dataset": dataset,
