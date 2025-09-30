@@ -48,7 +48,7 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
     ap = argparse.ArgumentParser(description="parse CL log files for final accuracies")
-    ap.add_argument("--base", default=None,
+    ap.add_argument("--base", default= '../logs',
                     help="base directory to search for log files (defaults to ../results)")
     ap.add_argument("--logs", nargs="*", help="explicit log file paths")
     ap.add_argument("--csv-name", default="table1_accuracies.csv", 
