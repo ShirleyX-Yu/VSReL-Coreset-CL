@@ -1,6 +1,6 @@
 export CUBLAS_WORKSPACE_CONFIG=:4096:8
 
-local_path='./results/split_mnist/test1'  # set your output path
+local_path='./results/split_mnist_prv/test1'  # set your output path
 dataset='splitmnist'
 setting='greedy'
 data_path=''
