@@ -175,7 +175,10 @@ def select_by_loss_diff(ref_loss_dic, rand_data, model, incremental_size, transf
             # for FNNet: hook fc2 (the penultimate layer before fc3)
             elif hasattr(model, 'fc2') and hasattr(model, 'fc3'):
                 hook_handle = model.fc2.register_forward_hook(hook_fn)
-            # for ResNet-style: look for avgpool or the last layer
+            # for ResNet: hook layer4 (the last conv layer before pooling and linear)
+            elif hasattr(model, 'layer4') and hasattr(model, 'linear'):
+                hook_handle = model.layer4.register_forward_hook(hook_fn)
+            # for other models with avgpool: look for avgpool or the last layer
             else:
                 for name, module in model.named_modules():
                     if 'avgpool' in name or 'pool' in name:
