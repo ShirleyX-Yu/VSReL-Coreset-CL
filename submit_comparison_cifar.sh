@@ -15,7 +15,7 @@ module load cuda
 module load python
 
 # Activate your conda environment
-source activate vsrel
+conda activate vsrel
 
 # Print job info
 echo "Job started at: $(date)"
