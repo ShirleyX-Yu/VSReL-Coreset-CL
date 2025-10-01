@@ -19,6 +19,7 @@ def make_selection_params(opts):
         'selection_steps': opts.selection_steps,
         'ideal_logit': True,
         'logit_compute_mode': 'end_task',
+        'use_qvendi': getattr(opts, 'use_qvendi', False),  # Enable Quality-Weighted Vendi Score
         'loss_params': {
             'ce_factor': 1.0,
             'mse_factor': opts.slt_mse_factor
@@ -145,6 +146,7 @@ if __name__ == '__main__':
     parser.add_argument('--aug_type', type=str, default='greedy')
     parser.add_argument('--buffer_type', type=str, default='coreset')
     parser.add_argument('--ref_sample_per_task', type=int, default=-1)
+    parser.add_argument('--use_qvendi', type=int, default=0, help='Use Quality-Weighted Vendi Score for selection (0=False, 1=True)')
     parser.add_argument('--seed', type=int)
     args = parser.parse_args()
 

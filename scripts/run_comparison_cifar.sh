@@ -1,17 +1,17 @@
 #!/bin/bash
-# Comparison script: runs exactly what run_mnist.sh does, comparing baseline vs q_vendi
-# This matches the parameters from scripts/run_mnist.sh exactly
+# Comparison script: runs exactly what run_cifar.sh does, comparing baseline vs q_vendi
+# This matches the parameters from scripts/run_cifar.sh exactly
 
 export CUBLAS_WORKSPACE_CONFIG=:4096:8
 
-# Common parameters (matching run_mnist.sh exactly)
-dataset='splitmnist'
+# Common parameters (matching run_cifar.sh exactly)
+dataset='splitcifar'
 setting='greedy'
 data_path=''
-buffer_size=100
-alpha=50.0
+buffer_size=200
+alpha=20.0
 beta=0.0
-lr=5e-4
+lr=1e-3
 epochs=400
 batch_size=256
 mem_batch_size=32
@@ -26,20 +26,20 @@ limit_per_task=1000
 runner_type='coreset'
 update_mode='coreset'
 extra_data=''
-ref_train_epoch=20
-selection_steps=100
-cur_train_steps=30
+ref_train_epoch=150
+selection_steps=200
+cur_train_steps=100
 buffer_type='coreset'
 aug_type='greedy'
 ref_train_lr=3e-3
-cur_train_lr=2e-2
+cur_train_lr=1e-2
 ref_sample_per_task=0
 
-# Run 1: Baseline (loss_diff only) - exactly matching run_mnist.sh
+# Run 1: Baseline (loss_diff only) - exactly matching run_cifar.sh
 echo "=========================================="
 echo "Running BASELINE (loss_diff)"
 echo "=========================================="
-local_path='./results/split_mnist_loss_diff/test1'
+local_path='./results/split_cifar_loss_diff/test1'
 
 python3 -u offline_continual_learning.py --local_path=$local_path \
 	--dataset=$dataset \
@@ -78,7 +78,7 @@ echo ""
 echo "=========================================="
 echo "Running Q-VENDI (loss_diff as quality)"
 echo "=========================================="
-local_path='./results/split_mnist_qvendi/test1'
+local_path='./results/split_cifar_qvendi/test1'
 
 python3 -u offline_continual_learning.py --local_path=$local_path \
 	--dataset=$dataset \
@@ -117,8 +117,8 @@ echo "=========================================="
 echo "Both runs complete!"
 echo "=========================================="
 echo "Results stored in:"
-echo "  Baseline: ./results/split_mnist_loss_diff/test1/buffer/*.pkl"
-echo "  Q-Vendi:  ./results/split_mnist_qvendi/test1/buffer/*.pkl"
+echo "  Baseline: ./results/split_cifar_loss_diff/test1/buffer/*.pkl"
+echo "  Q-Vendi:  ./results/split_cifar_qvendi/test1/buffer/*.pkl"
 echo ""
 echo "To compare results, run:"
-echo "  python analysis/summarize_table1.py ./results/split_mnist_loss_diff ./results/split_mnist_qvendi"
+echo "  python analysis/summarize_table1.py ./results/split_cifar_loss_diff ./results/split_cifar_qvendi"
