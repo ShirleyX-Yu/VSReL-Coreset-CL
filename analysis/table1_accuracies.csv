@@ -1,5 +1,7 @@
 dataset,log_file,final_mean_acc,n_tasks,per_task_accs,log_path
 split_cifar,cifar_25073571.out,41.74,5,"43.90,12.75,24.70,70.00,57.35",../logs/cifar_25073571.out
+split_cifar,cifar_comparison_25075440.out,41.74,5,"43.90,12.75,24.70,70.00,57.35",../logs/cifar_comparison_25075440.out
 split_cifar_prv,cifar_prv_25073606.out,40.99,5,"30.80,16.65,31.50,52.45,73.55",../logs/cifar_prv_25073606.out
 split_mnist,mnist_25073604.out,96.22,5,"98.39,92.65,94.98,98.14,96.92",../logs/mnist_25073604.out
+split_mnist,mnist_comparison_25075441.out,96.22,5,"98.39,92.65,94.98,98.14,96.92",../logs/mnist_comparison_25075441.out
 split_mnist_prv,mnist_prv_25073605.out,94.84,5,"98.49,89.81,94.24,94.06,97.58",../logs/mnist_prv_25073605.out

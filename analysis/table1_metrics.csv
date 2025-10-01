@@ -1,5 +1,9 @@
 dataset_root,test,metric,std,n_files,buffer_path,mode
 /n/fs/vsrel/VSReL-Coreset-CL/results/split_cifar,test1,0.659683,0.049748,5,/n/fs/vsrel/VSReL-Coreset-CL/results/split_cifar/test1/buffer,mean
+/n/fs/vsrel/VSReL-Coreset-CL/results/split_cifar_loss_diff,test1,0.659683,0.049748,5,/n/fs/vsrel/VSReL-Coreset-CL/results/split_cifar_loss_diff/test1/buffer,mean
 /n/fs/vsrel/VSReL-Coreset-CL/results/split_cifar_prv,test1,0.976147,0.202602,5,/n/fs/vsrel/VSReL-Coreset-CL/results/split_cifar_prv/test1/buffer,mean
+/n/fs/vsrel/VSReL-Coreset-CL/results/split_cifar_qvendi,test1,0.659683,0.049748,5,/n/fs/vsrel/VSReL-Coreset-CL/results/split_cifar_qvendi/test1/buffer,mean
 /n/fs/vsrel/VSReL-Coreset-CL/results/split_mnist,test1,0.236148,0.069612,5,/n/fs/vsrel/VSReL-Coreset-CL/results/split_mnist/test1/buffer,mean
+/n/fs/vsrel/VSReL-Coreset-CL/results/split_mnist_loss_diff,test1,0.236148,0.069612,5,/n/fs/vsrel/VSReL-Coreset-CL/results/split_mnist_loss_diff/test1/buffer,mean
 /n/fs/vsrel/VSReL-Coreset-CL/results/split_mnist_prv,test1,0.293513,0.083133,5,/n/fs/vsrel/VSReL-Coreset-CL/results/split_mnist_prv/test1/buffer,mean
+/n/fs/vsrel/VSReL-Coreset-CL/results/split_mnist_qvendi,test1,0.236148,0.069612,5,/n/fs/vsrel/VSReL-Coreset-CL/results/split_mnist_qvendi/test1/buffer,mean
