@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=cifar_cl
-#SBATCH --output=logs/cifar_%j.out
-#SBATCH --error=logs/cifar_%j.err
+#SBATCH --job-name=cifar_prv_loss_diff
+#SBATCH --output=logs/cifar_prv_loss_diff_%j.out
+#SBATCH --error=logs/cifar_prv_loss_diff_%j.err
 #SBATCH --time=24:00:00
 #SBATCH --partition=cs
 #SBATCH --gres=gpu:1
@@ -19,10 +19,10 @@ echo "Job started at: $(date)"
 echo "Running on node: $(hostname)"
 echo "Job ID: $SLURM_JOB_ID"
 
-mkdir -p results/split_cifar/test1
+mkdir -p results/split_cifar_prv_loss_diff/test1
 mkdir -p data/CIFAR10
 mkdir -p logs
 
-bash scripts/run_cifar.sh
+bash scripts/run_cifar_prv_loss_diff.sh
 
 echo "Job finished at: $(date)"

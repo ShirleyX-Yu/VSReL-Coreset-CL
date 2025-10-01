@@ -10,24 +10,19 @@
 #SBATCH --mail-type=begin,end,fail
 #SBATCH --mail-user=shirley.yu@princeton.edu
 
-# Load required modules
 module load cuda
 module load python
 
-# Activate your conda environment
 source activate vsrel
 
-# Print job info
 echo "Job started at: $(date)"
 echo "Running on node: $(hostname)"
 echo "Job ID: $SLURM_JOB_ID"
 
-# Create necessary directories
 mkdir -p results/split_cifar_loss_diff/test1
 mkdir -p data/CIFAR10
 mkdir -p logs
 
-# Run the experiment
 bash scripts/run_cifar_loss_diff.sh
 
 echo "Job finished at: $(date)"

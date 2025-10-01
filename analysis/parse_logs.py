@@ -98,6 +98,10 @@ def main():
             dataset = "split_cifar100_prv"
         elif "cifar100" in search_text:
             dataset = "split_cifar100"
+        elif "cifar_prv_loss_diff" in search_text or "cifar-prv-loss-diff" in search_text:
+            dataset = "split_cifar_prv_loss_diff"
+        elif "cifar_prv_qvendi" in search_text or "cifar-prv-qvendi" in search_text:
+            dataset = "split_cifar_prv_qvendi"
         elif "cifar_loss_diff" in search_text or "cifar-loss-diff" in search_text:
             dataset = "split_cifar_loss_diff"
         elif "cifar_qvendi" in search_text or "cifar-qvendi" in search_text:
@@ -107,6 +111,10 @@ def main():
         elif "cifar" in search_text:
             dataset = "split_cifar"
         # MNIST variants
+        elif "mnist_prv_loss_diff" in search_text or "mnist-prv-loss-diff" in search_text:
+            dataset = "split_mnist_prv_loss_diff"
+        elif "mnist_prv_qvendi" in search_text or "mnist-prv-qvendi" in search_text:
+            dataset = "split_mnist_prv_qvendi"
         elif "mnist_loss_diff" in search_text or "mnist-loss-diff" in search_text:
             dataset = "split_mnist_loss_diff"
         elif "mnist_qvendi" in search_text or "mnist-qvendi" in search_text:
