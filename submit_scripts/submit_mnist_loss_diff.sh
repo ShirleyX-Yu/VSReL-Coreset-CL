@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=mnist_qvendi
-#SBATCH --output=logs/mnist_qvendi_%j.out
-#SBATCH --error=logs/mnist_qvendi_%j.err
+#SBATCH --job-name=mnist_loss_diff
+#SBATCH --output=logs/mnist_loss_diff_%j.out
+#SBATCH --error=logs/mnist_loss_diff_%j.err
 #SBATCH --time=8:00:00
 #SBATCH --partition=cs
 #SBATCH --gres=gpu:1
@@ -15,9 +15,9 @@ module load python
 source activate vsrel
 
 echo "Job started at: $(date)"
-mkdir -p results/split_mnist_qvendi/test1
+mkdir -p results/split_mnist_loss_diff/test1
 mkdir -p data
 
-bash scripts/run_mnist_qvendi.sh
+bash scripts/run_mnist_loss_diff.sh
 
 echo "Job finished at: $(date)"

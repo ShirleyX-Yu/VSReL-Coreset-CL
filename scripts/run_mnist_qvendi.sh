@@ -1,27 +1,9 @@
 #!/bin/bash
-#SBATCH --job-name=mnist_baseline
-#SBATCH --output=logs/mnist_baseline_%j.out
-#SBATCH --error=logs/mnist_baseline_%j.err
-#SBATCH --time=24:00:00
-#SBATCH --partition=cs
-#SBATCH --gres=gpu:1
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=32G
-#SBATCH --mail-type=begin,end,fail
-#SBATCH --mail-user=shirley.yu@princeton.edu
+# run MNIST with Q-Vendi method
 
-module load cuda
-module load python
-conda activate vsrel
+export CUBLAS_WORKSPACE_CONFIG=:4096:8
 
-echo "Job started at: $(date)"
-echo "Running MNIST Baseline (loss_diff)"
-
-mkdir -p results/split_mnist_loss_diff/test1
-mkdir -p data/MNIST
-mkdir -p logs
-
-local_path='./results/split_mnist_loss_diff/test1'
+# parameters matching run_mnist.sh
 dataset='splitmnist'
 setting='greedy'
 data_path=''
@@ -51,6 +33,8 @@ aug_type='greedy'
 ref_train_lr=3e-3
 cur_train_lr=2e-2
 ref_sample_per_task=0
+
+local_path='./results/split_mnist_qvendi/test1'
 
 python3 -u offline_continual_learning.py --local_path=$local_path \
 	--dataset=$dataset \
@@ -82,6 +66,4 @@ python3 -u offline_continual_learning.py --local_path=$local_path \
 	--buffer_type=$buffer_type \
 	--ref_sample_per_task=$ref_sample_per_task \
 	--aug_type=$aug_type \
-	--use_qvendi=0
-
-echo "Job completed at: $(date)"
+	--use_qvendi=1
