@@ -88,22 +88,37 @@ def main():
         # try to infer dataset from path and filename
         dataset = "unknown"
         log_name = os.path.basename(log_path).lower()
+        log_dir = os.path.dirname(log_path).lower()
         
-        if "cifar_prv" in log_name or "cifar-prv" in log_name:
-            dataset = "split_cifar_prv"
-        elif "cifar100_prv" in log_name or "cifar100-prv" in log_name:
+        # Check both filename and directory path for dataset patterns
+        search_text = log_name + " " + log_dir
+        
+        # CIFAR variants (order matters - check more specific patterns first)
+        if "cifar100_prv" in search_text or "cifar100-prv" in search_text:
             dataset = "split_cifar100_prv"
-        elif "cifar100" in log_name:
+        elif "cifar100" in search_text:
             dataset = "split_cifar100"
-        elif "cifar" in log_name:
+        elif "cifar_loss_diff" in search_text or "cifar-loss-diff" in search_text:
+            dataset = "split_cifar_loss_diff"
+        elif "cifar_qvendi" in search_text or "cifar-qvendi" in search_text:
+            dataset = "split_cifar_qvendi"
+        elif "cifar_prv" in search_text or "cifar-prv" in search_text:
+            dataset = "split_cifar_prv"
+        elif "cifar" in search_text:
             dataset = "split_cifar"
-        elif "mnist_prv" in log_name or "mnist-prv" in log_name:
+        # MNIST variants
+        elif "mnist_loss_diff" in search_text or "mnist-loss-diff" in search_text:
+            dataset = "split_mnist_loss_diff"
+        elif "mnist_qvendi" in search_text or "mnist-qvendi" in search_text:
+            dataset = "split_mnist_qvendi"
+        elif "mnist_prv" in search_text or "mnist-prv" in search_text:
             dataset = "split_mnist_prv"
-        elif "mnist" in log_name:
+        elif "mnist" in search_text:
             dataset = "split_mnist"
-        elif "perm_prv" in log_name or "perm-prv" in log_name:
+        # Permuted MNIST variants
+        elif "perm_prv" in search_text or "perm-prv" in search_text:
             dataset = "perm_mnist_prv"
-        elif "perm" in log_name:
+        elif "perm" in search_text:
             dataset = "perm_mnist"
         
         rows.append({
