@@ -246,14 +246,25 @@ def select_by_loss_diff(ref_loss_dic, rand_data, model, incremental_size, transf
                 loss = loss.numpy()
                 
                 # extract features if using q_vendi
-                if use_qvendi and 'features' in features_dict:
-                    batch_features = features_dict['features']
-                    if on_cuda:
-                        batch_features = batch_features.cpu()
-                    batch_features = batch_features.numpy()
-                    # flatten features if needed
-                    if len(batch_features.shape) > 2:
-                        batch_features = batch_features.reshape(batch_features.shape[0], -1)
+                batch_features = None
+                if use_qvendi:
+                    # prefer using embed() method if available for cleaner feature extraction
+                    if hasattr(model, 'embed') and hook_handle is None:
+                        # no hook was registered, use embed() directly
+                        with torch.no_grad():
+                            batch_features = model.embed(sps)
+                            if on_cuda:
+                                batch_features = batch_features.cpu()
+                            batch_features = batch_features.numpy()
+                    elif 'features' in features_dict:
+                        # hook was registered and captured features
+                        batch_features = features_dict['features']
+                        if on_cuda:
+                            batch_features = batch_features.cpu()
+                        batch_features = batch_features.numpy()
+                        # flatten features if needed
+                        if len(batch_features.shape) > 2:
+                            batch_features = batch_features.reshape(batch_features.shape[0], -1)
                 
                 if lab_logits is not None:
                     if on_cuda:
@@ -266,7 +277,7 @@ def select_by_loss_diff(ref_loss_dic, rand_data, model, incremental_size, transf
                     loss_diffs[did] = loss_dif
                     if lab_logits is not None:
                         id2logits[did] = lab_logits[j, :]
-                    if use_qvendi and 'features' in features_dict:
+                    if use_qvendi and batch_features is not None:
                         id2features[did] = batch_features[j]
                 
                 batch_ids.clear()
