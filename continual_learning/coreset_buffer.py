@@ -45,7 +45,8 @@ class CoresetBuffer(object):
             ref_model=None,
             class_balance=self.selection_params['class_balance'],
             only_new_data=True,
-            loss_params=None if 'loss_params' not in self.selection_params else self.selection_params['loss_params']
+            loss_params=None if 'loss_params' not in self.selection_params else self.selection_params['loss_params'],
+            use_qvendi=self.selection_params.get('use_qvendi', False)
         )
         self.data = []
         self.id2task = {}

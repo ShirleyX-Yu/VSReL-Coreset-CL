@@ -3,3 +3,4 @@ numpy==1.26.2
 torchvision==0.14.1
 timm==0.6.12
 onedrivedownloader
+scipy>=1.9.0
