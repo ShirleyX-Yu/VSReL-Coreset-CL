@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=cifar_prv_qvendi
-#SBATCH --output=logs/cifar_prv_qvendi_%j.out
-#SBATCH --error=logs/cifar_prv_qvendi_%j.err
+#SBATCH --output=../logs/cifar_prv_qvendi_%j.out
+#SBATCH --error=../logs/cifar_prv_qvendi_%j.err
 #SBATCH --time=24:00:00
 #SBATCH --partition=cs
 #SBATCH --gres=gpu:1
@@ -18,10 +18,11 @@ source activate vsrel
 echo "Job started at: $(date)"
 echo "Running on node: $(hostname)"
 echo "Job ID: $SLURM_JOB_ID"
-mkdir -p results/split_cifar_prv_qvendi/test1
-mkdir -p data/CIFAR10
-mkdir -p logs
+mkdir -p ../results/split_cifar_prv_qvendi/test1
+mkdir -p ../data/CIFAR10
+mkdir -p ../logs
 
+cd ..
 bash scripts/run_cifar_prv_qvendi.sh
 
 echo "Job finished at: $(date)"
