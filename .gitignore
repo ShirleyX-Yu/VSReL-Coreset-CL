@@ -29,6 +29,7 @@ cifar-10-batches-py/
 cifar-100-python/
 MNIST/
 tiny-imagenet-200/
+tiny_imagenet_from_DER/
 
 # IDE
 .vscode/
