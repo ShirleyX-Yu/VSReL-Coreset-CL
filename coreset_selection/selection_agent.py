@@ -18,7 +18,7 @@ from functions import train_methods
 class RhoSelectionAgent(object):
     def __init__(self, local_path, transforms, init_size, selection_steps, cur_train_lr, cur_train_steps, use_cuda,
                  eval_mode, early_stop, eval_steps, model_params, ref_train_params, seed, ref_model=None,
-                 class_balance=True, only_new_data=True, loss_params=None, save_checkpoint=False, use_qvendi=False):
+                 class_balance=True, only_new_data=True, loss_params=None, save_checkpoint=False, use_qvendi=False, qvendi_q=1.0):
         # all related setting
         self.local_path = local_path
         if not os.path.exists(self.local_path):
@@ -40,6 +40,7 @@ class RhoSelectionAgent(object):
         self.seed = seed
         self.save_checkpoint = save_checkpoint
         self.use_qvendi = use_qvendi
+        self.qvendi_q = qvendi_q
         # make train_params
         if loss_params is None:
             loss_params = {
@@ -294,7 +295,8 @@ class RhoSelectionAgent(object):
                 on_cuda=self.train_params['use_cuda'],
                 loss_params=self.train_params['loss_params'],
                 class_sizes=class_sizes,
-                use_qvendi=self.use_qvendi
+                use_qvendi=self.use_qvendi,
+                qvendi_q=self.qvendi_q
             )
             flg_add = False
             for di in selected_data:

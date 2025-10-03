@@ -20,6 +20,7 @@ def make_selection_params(opts):
         'ideal_logit': True,
         'logit_compute_mode': 'end_task',
         'use_qvendi': getattr(opts, 'use_qvendi', False),  # enable qVS
+        'qvendi_q': getattr(opts, 'qvendi_q', 1.0),  # q parameter for qVS
         'loss_params': {
             'ce_factor': 1.0,
             'mse_factor': opts.slt_mse_factor
@@ -147,6 +148,7 @@ if __name__ == '__main__':
     parser.add_argument('--buffer_type', type=str, default='coreset')
     parser.add_argument('--ref_sample_per_task', type=int, default=-1)
     parser.add_argument('--use_qvendi', type=int, default=0, help='Use Quality-Weighted Vendi Score for selection (0=False, 1=True)')
+    parser.add_argument('--qvendi_q', type=float, default=1.0, help='Order parameter q for Quality-Weighted Vendi Score')
     parser.add_argument('--seed', type=int)
     args = parser.parse_args()
 
@@ -181,5 +183,7 @@ if __name__ == '__main__':
     print('aug type\t\t', args.aug_type)
     print('buffer type\t\t', args.buffer_type)
     print('ref sample per task\t\t', args.ref_sample_per_task)
+    print('use_qvendi\t\t', args.use_qvendi)
+    print('qvendi_q\t\t', args.qvendi_q)
     print('seed\t\t', args.seed)
     main(opts=args)

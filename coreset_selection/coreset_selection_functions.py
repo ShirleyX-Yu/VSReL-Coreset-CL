@@ -23,11 +23,14 @@ def random_select(id2cnt, select_size):
 
 
 def _select_by_qvendi(loss_diffs, id2features, id2pos, rand_data, incremental_size, 
-                      class_sizes, id2logits, loss_params):
+                      class_sizes, id2logits, loss_params, q=1.0):
     """
     Select samples using Quality-Weighted Vendi Score.
     Quality = loss_diff (reducible loss)
     Diversity = computed from feature similarity
+    
+    Args:
+        q: order parameter for qVS (default 1.0)
     """
     # prepare data structures
     all_ids = list(loss_diffs.keys())
@@ -82,7 +85,7 @@ def _select_by_qvendi(loss_diffs, id2features, id2pos, rand_data, incremental_si
             K_subset = K[np.ix_(test_indices, test_indices)]
             quality_subset = quality_scores[test_indices]
             
-            qvs = q_vendi.score_from_kernel_matrix(K_subset, quality_subset)
+            qvs = q_vendi.score_from_kernel_matrix(K_subset, quality_subset, q=q)
             
             if qvs > best_qvs:
                 best_qvs = qvs
@@ -140,7 +143,7 @@ def add_new_data(data_file, new_data):
 
 
 def select_by_loss_diff(ref_loss_dic, rand_data, model, incremental_size, transforms, on_cuda, loss_params,
-                        class_sizes=None, use_qvendi=False):
+                        class_sizes=None, use_qvendi=False, qvendi_q=1.0):
     status = model.training
     model.eval()
     if on_cuda:
@@ -292,7 +295,7 @@ def select_by_loss_diff(ref_loss_dic, rand_data, model, incremental_size, transf
     
     # selection based on q_vendi or original loss_diff
     if use_qvendi and len(id2features) > 0:
-        print(f"Using Q-Vendi selection with {len(id2features)} samples")
+        print(f"Using Q-Vendi selection with {len(id2features)} samples, q={qvendi_q}")
         selected_data, id2loss_dif = _select_by_qvendi(
             loss_diffs=loss_diffs,
             id2features=id2features,
@@ -301,7 +304,8 @@ def select_by_loss_diff(ref_loss_dic, rand_data, model, incremental_size, transf
             incremental_size=incremental_size,
             class_sizes=class_sizes,
             id2logits=id2logits,
-            loss_params=loss_params
+            loss_params=loss_params,
+            q=qvendi_q
         )
     else:
         if use_qvendi:
