@@ -47,6 +47,9 @@ local_path="./results/split_cifar_qvendi_q${q}/seed${seed}"
 
 echo "Running CIFAR with q=$q on GPU $CUDA_VISIBLE_DEVICES"
 
+# change to repository root directory
+cd ..
+
 python3 -u offline_continual_learning.py --local_path=$local_path \
     --dataset=$dataset \
     --setting=$setting \
