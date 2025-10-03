@@ -19,7 +19,7 @@ def make_selection_params(opts):
         'selection_steps': opts.selection_steps,
         'ideal_logit': True,
         'logit_compute_mode': 'end_task',
-        'use_qvendi': getattr(opts, 'use_qvendi', False),  # Enable Quality-Weighted Vendi Score
+        'use_qvendi': getattr(opts, 'use_qvendi', False),  # enable qVS
         'loss_params': {
             'ce_factor': 1.0,
             'mse_factor': opts.slt_mse_factor
