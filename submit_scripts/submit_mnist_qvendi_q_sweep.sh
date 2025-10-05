@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=mnist_qvendi_q_sweep
-#SBATCH --output=logs/mnist_qvendi_q_sweep_%A_%a.out
-#SBATCH --error=logs/mnist_qvendi_q_sweep_%A_%a.err
+#SBATCH --output=../logs/mnist_qvendi_q_sweep_%A_%a.out
+#SBATCH --error=../logs/mnist_qvendi_q_sweep_%A_%a.err
 #SBATCH --array=0-5
 #SBATCH --time=12:00:00
 #SBATCH --mem=16G
