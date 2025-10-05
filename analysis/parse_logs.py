@@ -93,6 +93,22 @@ def main():
         # Check both filename and directory path for dataset patterns
         search_text = log_name + " " + log_dir
         
+        # extract q value if present (e.g., q_sweep_25111407_0 or qvendi_q0.1)
+        q_value = None
+        q_match = re.search(r'q_sweep[_\-](\d+)[_\-](\d+)', log_name)
+        if q_match:
+            # for array jobs like cifar_qvendi_q_sweep_25111407_0
+            # the last number is the array index (0-5 maps to q values)
+            array_idx = int(q_match.group(2))
+            q_values = ["0.1", "0.5", "1.0", "2.0", "10.0", "inf"]
+            if 0 <= array_idx < len(q_values):
+                q_value = q_values[array_idx]
+        else:
+            # for explicit q values like qvendi_q0.1 or qvendi_q_0.1
+            q_match = re.search(r'q[_\-]?(\d+\.?\d*|inf)', search_text)
+            if q_match:
+                q_value = q_match.group(1)
+        
         # CIFAR variants (order matters - check more specific patterns first)
         if "cifar100_prv" in search_text or "cifar100-prv" in search_text:
             dataset = "split_cifar100_prv"
@@ -129,13 +145,18 @@ def main():
         elif "perm" in search_text:
             dataset = "perm_mnist"
         
+        # append q value to dataset name if found
+        if q_value:
+            dataset = f"{dataset}_q{q_value}"
+        
         rows.append({
             "dataset": dataset,
             "log_file": os.path.basename(log_path),
             "final_mean_acc": mean_acc,
             "per_task_accs": accs,
             "n_tasks": len(accs),
-            "path": log_path
+            "path": log_path,
+            "q_value": q_value
         })
         
         if args.verbose:

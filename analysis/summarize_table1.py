@@ -33,7 +33,7 @@ def extract_accs(path):
     # bare list of floats - check first element is actually a number
     if isinstance(obj, (list, tuple)) and obj:
         try:
-            # Try to convert first element to float to verify it's numeric
+            # try to convert first element to float to verify it's numeric
             if isinstance(obj[0], (int, float)):
                 return [float(x) for x in obj]
         except (TypeError, ValueError):
@@ -60,7 +60,7 @@ def summarize_buffer_dir(buffer_dir, use_last=False, verbose=False):
 def discover_roots(base_dir):
     """
     Auto-discover dataset roots under base_dir.
-    A root is any immediate child of base_dir that contains at least one test*/buffer directory.
+    A root is any immediate child of base_dir that contains at least one test*/buffer or seed*/buffer directory.
     """
     roots = []
     if not os.path.isdir(base_dir):
@@ -69,10 +69,10 @@ def discover_roots(base_dir):
         candidate = os.path.join(base_dir, name)
         if not os.path.isdir(candidate):
             continue
-        # look for test*/buffer one level down
+        # look for test*/buffer or seed*/buffer one level down
         found = False
         for testdir in os.listdir(candidate):
-            if testdir.startswith("test"):
+            if testdir.startswith("test") or testdir.startswith("seed"):
                 if os.path.isdir(os.path.join(candidate, testdir, "buffer")):
                     found = True
                     break
@@ -113,7 +113,7 @@ def main():
         if not os.path.isdir(root):
             print(f"[! ] Skipping non-directory root: {root}", file=sys.stderr)
             continue
-        testdirs = sorted([d for d in os.listdir(root) if d.startswith("test")])
+        testdirs = sorted([d for d in os.listdir(root) if d.startswith("test") or d.startswith("seed")])
         any_found = False
         for t in testdirs:
             buffer_dir = os.path.join(root, t, "buffer")
