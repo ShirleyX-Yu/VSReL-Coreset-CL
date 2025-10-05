@@ -12,6 +12,11 @@
 q_values=(0.1 0.5 1.0 2.0 10.0 inf)
 q=${q_values[$SLURM_ARRAY_TASK_ID]}
 
+module load cuda
+module load python
+
+source activate vsrel
+
 export CUBLAS_WORKSPACE_CONFIG=:4096:8
 dataset='splitcifar'
 setting='greedy'
