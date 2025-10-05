@@ -7,6 +7,8 @@
 #SBATCH --mem=16G
 #SBATCH --cpus-per-task=4
 #SBATCH --gres=gpu:1
+#SBATCH --mail-type=begin,end,fail
+#SBATCH --mail-user=shirley.yu@princeton.edu
 
 # q values
 q_values=(0.1 0.5 1.0 2.0 10.0 inf)
