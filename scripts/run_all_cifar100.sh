@@ -1,4 +1,12 @@
 #!/bin/bash
+#SBATCH --job-name=cifar100_all
+#SBATCH --output=logs/cifar100_all_%j.out
+#SBATCH --error=logs/cifar100_all_%j.err
+#SBATCH --time=48:00:00
+#SBATCH --mem=32G
+#SBATCH --cpus-per-task=4
+#SBATCH --gres=gpu:1
+
 # run all split cifar-100 experiments (qvendi, loss_diff, prv_qvendi, prv_loss_diff)
 
 # create logs directory if it doesn't exist
