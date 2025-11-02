@@ -2,7 +2,7 @@
 #SBATCH --job-name=perm_all
 #SBATCH --output=logs/perm_all_%j.out
 #SBATCH --error=logs/perm_all_%j.err
-#SBATCH --time=4:00:00
+#SBATCH --time=1:00:00
 #SBATCH --partition=cs
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=4

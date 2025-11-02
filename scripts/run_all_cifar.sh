@@ -2,7 +2,7 @@
 #SBATCH --job-name=cifar_all
 #SBATCH --output=logs/cifar_all_%j.out
 #SBATCH --error=logs/cifar_all_%j.err
-#SBATCH --time=24:00:00
+#SBATCH --time=6:00:00
 #SBATCH --partition=cs
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=4
