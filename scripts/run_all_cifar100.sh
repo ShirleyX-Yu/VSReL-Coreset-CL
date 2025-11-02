@@ -12,6 +12,11 @@
 
 # run all split cifar-100 experiments (qvendi, loss_diff, prv_qvendi, prv_loss_diff)
 
+# get script directory and project root
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
+cd "$PROJECT_ROOT"
+
 module load cuda
 module load python
 
@@ -32,22 +37,22 @@ echo "=========================================="
 echo ""
 
 echo "running cifar100_qvendi..."
-bash scripts/run_cifar100_qvendi.sh > ../logs/cifar100_qvendi.out 2>&1
+bash scripts/run_cifar100_qvendi.sh > logs/cifar100_qvendi.out 2>&1
 echo "✓ completed cifar100_qvendi"
 echo ""
 
 echo "running cifar100_loss_diff..."
-bash scripts/run_cifar100_loss_diff.sh > ../logs/cifar100_loss_diff.out 2>&1
+bash scripts/run_cifar100_loss_diff.sh > logs/cifar100_loss_diff.out 2>&1
 echo "✓ completed cifar100_loss_diff"
 echo ""
 
 echo "running cifar100_prv_qvendi..."
-bash scripts/run_cifar100_prv_qvendi.sh > ../logs/cifar100_prv_qvendi.out 2>&1
+bash scripts/run_cifar100_prv_qvendi.sh > logs/cifar100_prv_qvendi.out 2>&1
 echo "✓ completed cifar100_prv_qvendi"
 echo ""
 
 echo "running cifar100_prv_loss_diff..."
-bash scripts/run_cifar100_prv_loss_diff.sh > ../logs/cifar100_prv_loss_diff.out 2>&1
+bash scripts/run_cifar100_prv_loss_diff.sh > logs/cifar100_prv_loss_diff.out 2>&1
 echo "✓ completed cifar100_prv_loss_diff"
 echo ""
 
