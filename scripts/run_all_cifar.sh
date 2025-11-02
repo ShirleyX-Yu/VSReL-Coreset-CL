@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=cifar_all
-#SBATCH --output=logs/cifar_all_%j.out
-#SBATCH --error=logs/cifar_all_%j.err
+#SBATCH --output=../logs/cifar_all_%j.out
+#SBATCH --error=../logs/cifar_all_%j.err
 #SBATCH --time=6:00:00
 #SBATCH --partition=cs
 #SBATCH --gres=gpu:1

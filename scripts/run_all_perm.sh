@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=perm_all
-#SBATCH --output=logs/perm_all_%j.out
-#SBATCH --error=logs/perm_all_%j.err
+#SBATCH --output=../logs/perm_all_%j.out
+#SBATCH --error=../logs/perm_all_%j.err
 #SBATCH --time=1:00:00
 #SBATCH --partition=cs
 #SBATCH --gres=gpu:1

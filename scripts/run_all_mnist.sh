@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=mnist_all
-#SBATCH --output=logs/mnist_all_%j.out
-#SBATCH --error=logs/mnist_all_%j.err
+#SBATCH --output=../logs/mnist_all_%j.out
+#SBATCH --error=../logs/mnist_all_%j.err
 #SBATCH --time=1:00:00
 #SBATCH --partition=cs
 #SBATCH --gres=gpu:1
