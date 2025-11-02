@@ -2,12 +2,19 @@
 #SBATCH --job-name=cifar_all
 #SBATCH --output=logs/cifar_all_%j.out
 #SBATCH --error=logs/cifar_all_%j.err
-#SBATCH --time=6:00:00
-#SBATCH --mem=32G
-#SBATCH --cpus-per-task=4
+#SBATCH --time=24:00:00
+#SBATCH --partition=cs
 #SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=32G
+#SBATCH --mail-type=begin,end,fail
+#SBATCH --mail-user=shirley.yu@princeton.edu
 
 # run all split cifar-10 experiments (qvendi, loss_diff, prv_qvendi, prv_loss_diff)
+
+module load cuda
+module load python
+conda activate vsrel
 
 # create logs directory if it doesn't exist
 mkdir -p logs
@@ -16,6 +23,10 @@ echo "=========================================="
 echo "running all split cifar-10 experiments"
 echo "=========================================="
 echo ""
+
+echo "Job started at: $(date)"
+echo "Running on node: $(hostname)"
+echo "Job ID: $SLURM_JOB_ID"
 
 echo "running cifar_qvendi..."
 bash scripts/run_cifar_qvendi.sh > logs/cifar_qvendi.out 2>&1
@@ -41,3 +52,5 @@ echo "=========================================="
 echo "all split cifar-10 experiments completed!"
 echo "logs saved to logs/cifar_*.out"
 echo "=========================================="
+
+echo "Job finished at: $(date)"
