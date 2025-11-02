@@ -17,6 +17,9 @@ mkdir -p logs
 
 module load cuda
 module load python
+
+# initialize conda
+source $(conda info --base)/etc/profile.d/conda.sh
 conda activate vsrel
 
 echo "=========================================="
@@ -29,22 +32,22 @@ echo "Running on node: $(hostname)"
 echo "Job ID: $SLURM_JOB_ID"
 
 echo "running perm_qvendi..."
-bash scripts/run_perm_qvendi.sh > logs/perm_qvendi.out 2>&1
+bash scripts/run_perm_qvendi.sh > ../logs/perm_qvendi.out 2>&1
 echo "✓ completed perm_qvendi"
 echo ""
 
 echo "running perm_loss_diff..."
-bash scripts/run_perm_loss_diff.sh > logs/perm_loss_diff.out 2>&1
+bash scripts/run_perm_loss_diff.sh > ../logs/perm_loss_diff.out 2>&1
 echo "✓ completed perm_loss_diff"
 echo ""
 
 echo "running perm_prv_qvendi..."
-bash scripts/run_perm_prv_qvendi.sh > logs/perm_prv_qvendi.out 2>&1
+bash scripts/run_perm_prv_qvendi.sh > ../logs/perm_prv_qvendi.out 2>&1
 echo "✓ completed perm_prv_qvendi"
 echo ""
 
 echo "running perm_prv_loss_diff..."
-bash scripts/run_perm_prv_loss_diff.sh > logs/perm_prv_loss_diff.out 2>&1
+bash scripts/run_perm_prv_loss_diff.sh > ../logs/perm_prv_loss_diff.out 2>&1
 echo "✓ completed perm_prv_loss_diff"
 echo ""
 
