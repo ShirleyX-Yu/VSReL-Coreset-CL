@@ -12,9 +12,12 @@
 
 # run all perm mnist experiments (qvendi, loss_diff, prv_qvendi, prv_loss_diff)
 
-# get script directory and project root
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PROJECT_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
+# get project root from submit directory
+if [[ "${SLURM_SUBMIT_DIR}" == */scripts ]]; then
+    PROJECT_ROOT="${SLURM_SUBMIT_DIR%/scripts}"
+else
+    PROJECT_ROOT="${SLURM_SUBMIT_DIR}"
+fi
 cd "$PROJECT_ROOT"
 
 # initialize conda
