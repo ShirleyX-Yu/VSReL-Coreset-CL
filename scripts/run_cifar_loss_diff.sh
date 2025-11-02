@@ -36,6 +36,12 @@ ref_sample_per_task=0
 
 local_path='./results/split_cifar_loss_diff/test1'
 
+# create logs directory if it doesn't exist
+mkdir -p logs
+
+# redirect all output to log file
+exec > logs/cifar_loss_diff.out 2>&1
+
 python3 -u offline_continual_learning.py --local_path=$local_path \
 	--dataset=$dataset \
 	--setting=$setting \

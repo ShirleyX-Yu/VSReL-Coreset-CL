@@ -50,7 +50,7 @@ def _select_by_qvendi(loss_diffs, id2features, id2pos, rand_data, incremental_si
     # compute similarity matrix using cosine similarity
     # normalize features
     features_norm = features / (np.linalg.norm(features, axis=1, keepdims=True) + 1e-8)
-    K = np.dot(features_norm, features_norm.T)  # cosine similarity
+    K = np.dot(features_norm, features_norm.T)  # cosine similarity # try RBF (width, search)
     
     # greedy selection to maximize q_vendi score
     selected_indices = []

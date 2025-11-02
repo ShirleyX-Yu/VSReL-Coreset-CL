@@ -1,46 +1,46 @@
 #!/bin/bash
-# run MNIST with Q-Vendi method
+# run cifar-100 with loss_diff baseline (no q-vendi)
 
 export CUBLAS_WORKSPACE_CONFIG=:4096:8
 
-# parameters matching run_mnist.sh
-dataset='splitmnist'
+# parameters matching run_cifar100.sh
+dataset='splitcifar100'
 setting='greedy'
 data_path=''
-buffer_size=100
-alpha=50.0
+buffer_size=200
+alpha=4.0
 beta=0.0
-lr=5e-4
-epochs=400
-batch_size=256
+lr=2e-2
+epochs=100
+batch_size=32
 mem_batch_size=32
 use_cuda=1
-opt_type='adam'
+opt_type='sgd'
 seed=0
 slt_wo_aug=0
 holdout_set='sub'
-replay_mode='full'
-use_bn=0
-limit_per_task=1000
+replay_mode='sub'
+use_bn=1
+limit_per_task=5000
 runner_type='coreset'
 update_mode='coreset'
 extra_data=''
-ref_train_epoch=20
-selection_steps=100
-cur_train_steps=30
+ref_train_epoch=10
+selection_steps=40
+cur_train_steps=7
 buffer_type='coreset'
 aug_type='greedy'
 ref_train_lr=3e-3
-cur_train_lr=2e-2
+cur_train_lr=5e-3
 ref_sample_per_task=0
 
-local_path='./results/split_mnist_qvendi/test1'
+local_path='./results/split_cifar100_loss_diff/test1'
 
 # create logs directory if it doesn't exist
 mkdir -p logs
 
 # redirect all output to log file
-exec > logs/mnist_qvendi.out 2>&1
+exec > logs/cifar100_loss_diff.out 2>&1
 
 python3 -u offline_continual_learning.py --local_path=$local_path \
 	--dataset=$dataset \
@@ -72,4 +72,4 @@ python3 -u offline_continual_learning.py --local_path=$local_path \
 	--buffer_type=$buffer_type \
 	--ref_sample_per_task=$ref_sample_per_task \
 	--aug_type=$aug_type \
-	--use_qvendi=1
+	--use_qvendi=0

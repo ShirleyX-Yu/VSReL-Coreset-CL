@@ -1,38 +1,47 @@
+#!/bin/bash
+# run permuted MNIST PRV with Q-Vendi method
+
 export CUBLAS_WORKSPACE_CONFIG=:4096:8
 
-local_path='./results/split_cifar100/test1'  # set your output path
-dataset='splitcifar100'
+# parameters matching run_perm_prv.sh
+dataset='permmnist'
 setting='greedy'
 data_path=''
-buffer_size=200
-alpha=4.0
+buffer_size=100
+alpha=0.1
 beta=0.0
-lr=2e-2
-epochs=100
-batch_size=32
+lr=5e-4
+epochs=400
+batch_size=256
 mem_batch_size=32
 use_cuda=1
-opt_type='sgd'
+opt_type='adam'
 seed=0
 slt_wo_aug=0
 holdout_set='sub'
-replay_mode='sub'
-use_bn=1
-limit_per_task=5000
+replay_mode='full'
+use_bn=0
+limit_per_task=1000
 runner_type='coreset'
 update_mode='coreset'
 extra_data=''
-ref_train_epoch=10
-selection_steps=40
-cur_train_steps=7
+ref_train_epoch=120
+selection_steps=100
+cur_train_steps=30
 buffer_type='coreset'
-aug_type='greedy'
-ref_train_lr=3e-3
-cur_train_lr=5e-3
-ref_sample_per_task=0
+ref_train_lr=5e-3
+cur_train_lr=1e-2
+ref_sample_per_task=50
 
+local_path='./results/perm_mnist_prv_qvendi/test1'
 
-python3 -u offline_continual_learning.py --local_path=$local_path \
+# create logs directory if it doesn't exist
+mkdir -p logs
+
+# redirect all output to log file
+exec > logs/perm_prv_qvendi.out 2>&1
+
+python3 -u permuted_mnist_cl.py --local_path=$local_path \
 	--dataset=$dataset \
 	--setting=$setting \
 	--data_path=$data_path \
@@ -57,9 +66,8 @@ python3 -u offline_continual_learning.py --local_path=$local_path \
 	--ref_train_epoch=$ref_train_epoch \
 	--selection_steps=$selection_steps \
 	--cur_train_steps=$cur_train_steps \
+	--buffer_type=$buffer_type \
 	--ref_train_lr=$ref_train_lr \
 	--cur_train_lr=$cur_train_lr \
-	--buffer_type=$buffer_type \
 	--ref_sample_per_task=$ref_sample_per_task \
-	--aug_type=$aug_type
-
+	--use_qvendi=1
