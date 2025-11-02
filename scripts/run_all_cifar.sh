@@ -17,15 +17,15 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
 cd "$PROJECT_ROOT"
 
+# create logs directory if it doesn't exist
+mkdir -p logs
+
 module load cuda
 module load python
 
 # initialize conda
 source $(conda info --base)/etc/profile.d/conda.sh
 conda activate vsrel
-
-# create logs directory if it doesn't exist
-mkdir -p logs
 
 echo "=========================================="
 echo "running all split cifar-10 experiments"

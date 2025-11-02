@@ -17,6 +17,9 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
 cd "$PROJECT_ROOT"
 
+# create logs directory if it doesn't exist
+mkdir -p logs
+
 module load cuda
 module load python
 
@@ -27,9 +30,6 @@ conda activate vsrel
 echo "Job started at: $(date)"
 echo "Running on node: $(hostname)"
 echo "Job ID: $SLURM_JOB_ID"
-
-# create logs directory if it doesn't exist
-mkdir -p logs
 
 echo "=========================================="
 echo "running all split cifar-100 experiments"
