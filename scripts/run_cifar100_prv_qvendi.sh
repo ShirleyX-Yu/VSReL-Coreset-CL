@@ -36,12 +36,6 @@ ref_sample_per_task=200
 
 local_path='./results/split_cifar100_prv_qvendi/test1'
 
-# create logs directory if it doesn't exist
-mkdir -p logs
-
-# redirect all output to log file
-exec > logs/cifar100_prv_qvendi.out 2>&1
-
 python3 -u offline_continual_learning.py --local_path=$local_path \
 	--dataset=$dataset \
 	--setting=$setting \

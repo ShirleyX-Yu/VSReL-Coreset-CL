@@ -35,12 +35,6 @@ ref_sample_per_task=0
 
 local_path='./results/perm_mnist_loss_diff/test1'
 
-# create logs directory if it doesn't exist
-mkdir -p logs
-
-# redirect all output to log file
-exec > logs/perm_loss_diff.out 2>&1
-
 python3 -u permuted_mnist_cl.py --local_path=$local_path \
 	--dataset=$dataset \
 	--setting=$setting \

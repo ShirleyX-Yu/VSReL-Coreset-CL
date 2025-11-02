@@ -1,24 +1,31 @@
 #!/bin/bash
 # run all perm mnist experiments (qvendi, loss_diff, prv_qvendi, prv_loss_diff)
 
+# create logs directory if it doesn't exist
+mkdir -p logs
+
 echo "=========================================="
 echo "running all perm mnist experiments"
 echo "=========================================="
 echo ""
 
-bash scripts/run_perm_qvendi.sh
+echo "running perm_qvendi..."
+bash scripts/run_perm_qvendi.sh > logs/perm_qvendi.out 2>&1
 echo "✓ completed perm_qvendi"
 echo ""
 
-bash scripts/run_perm_loss_diff.sh
+echo "running perm_loss_diff..."
+bash scripts/run_perm_loss_diff.sh > logs/perm_loss_diff.out 2>&1
 echo "✓ completed perm_loss_diff"
 echo ""
 
-bash scripts/run_perm_prv_qvendi.sh
+echo "running perm_prv_qvendi..."
+bash scripts/run_perm_prv_qvendi.sh > logs/perm_prv_qvendi.out 2>&1
 echo "✓ completed perm_prv_qvendi"
 echo ""
 
-bash scripts/run_perm_prv_loss_diff.sh
+echo "running perm_prv_loss_diff..."
+bash scripts/run_perm_prv_loss_diff.sh > logs/perm_prv_loss_diff.out 2>&1
 echo "✓ completed perm_prv_loss_diff"
 echo ""
 
